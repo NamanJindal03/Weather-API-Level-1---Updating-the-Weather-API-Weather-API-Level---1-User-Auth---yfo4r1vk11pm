@@ -1,4 +1,5 @@
 // Define the User Schema
+const mongoose = require('mongoose')
 const userSchema = new mongoose.Schema(
   {
     // Define the 'username' field
