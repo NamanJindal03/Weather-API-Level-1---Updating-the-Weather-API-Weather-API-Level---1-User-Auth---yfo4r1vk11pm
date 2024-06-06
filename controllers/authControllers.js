@@ -23,9 +23,17 @@ const decodeToken = (req, res, next) => {
 const signup = async (req, res, next) => {
   try {
     // Extract user data from the request body (e.g., username, email, password)
+    const {username, email, password} = req.body;
     // Create a new user instance using the User model
+    const user = await User.create({email, username, password})
+    res.status(201).json({
+      message: "User created successfully",
+      status: "success",
+      user
+    })
     // Save the user to the database
     // Handle success and send a success response with user data
+
     // Handle errors and send an error response
   } catch (err) {
     res.status(500).json({
@@ -40,7 +48,40 @@ const signup = async (req, res, next) => {
 const login = async (req, res, next) => {
   try {
     // Extract user credentials from the request body (e.g., email, password)
+    const {email, password} = req.body;
     // Check if both email and password are provided; if not, send an error response
+    if(!email || !password){
+      return res.status(400).json({
+        message: 'Email or Password not provided',
+        status: "error"
+      })
+    }
+
+    const user = await User.findOne({email: email});
+    if(!user){
+      return res.status(400).json({
+        message: 'User not found',
+        status: "error"
+      })
+    }
+    const isPasswordMatch = bcrypt.compare(password, user.password);
+    if(!isPasswordMatch){
+      return res.status(400).json({
+        message: 'Please provide correct password',
+        status: "error"
+      })
+    }
+    const jwtToken = jwt.sign({userId: user._id, username: user.username, email: user.email},
+      {
+        expiresIn: '1d'
+      }
+    )
+
+    res.status(200).json({
+      token: jwtToken,
+      status: 'success',
+      message: 'user login successfull'
+    })
     // Find the user in the database by their email
     // If the user is not found, send an error response
     // Compare the provided password with the stored password using bcrypt

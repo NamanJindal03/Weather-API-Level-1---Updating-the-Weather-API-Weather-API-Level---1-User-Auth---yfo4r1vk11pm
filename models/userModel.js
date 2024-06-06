@@ -2,6 +2,25 @@
 const userSchema = new mongoose.Schema(
   {
     // Define the 'username' field
+    username: {
+      type: 'String',
+      unique: true,
+      required: true
+    },
+    email: {
+      type: 'String',
+      unique: true,
+      required: true
+    },
+    password: {
+      type: 'String',
+      required: true,
+      validate(password){
+        if(password.length < 8){
+          throw new Error('Password should be at least 8 characters long')
+        }
+      }
+    },
     // 1) The data type of this field is a string
     // 2) This field is required
     // 3) Each username must be unique
