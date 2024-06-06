@@ -29,7 +29,7 @@ const signup = async (req, res, next) => {
     return res.status(201).json({
       message: "User created successfully",
       status: "success",
-      user
+      data: user
     })
     // Save the user to the database
     // Handle success and send a success response with user data
@@ -68,7 +68,8 @@ const login = async (req, res, next) => {
     if(!isPasswordMatch){
       return res.status(401).json({
         message: 'Invalid email or password',
-        status: "Error"
+        status: "Error", 
+        error: 'Invalid Credentials'
       })
     }
     const jwtToken = jwt.sign({userId: user._id, username: user.username, email: user.email},
