@@ -26,7 +26,7 @@ const signup = async (req, res, next) => {
     const {username, email, password} = req.body;
     // Create a new user instance using the User model
     const user = await User.create({email, username, password})
-    res.status(201).json({
+    return res.status(201).json({
       message: "User created successfully",
       status: "success",
       user
@@ -52,21 +52,21 @@ const login = async (req, res, next) => {
     // Check if both email and password are provided; if not, send an error response
     if(!email || !password){
       return res.status(400).json({
-        message: 'Email or Password not provided',
+        message: 'Please provide email and password',
         status: "error"
       })
     }
 
     const user = await User.findOne({email: email});
     if(!user){
-      return res.status(400).json({
+      return res.status(401).json({
         message: 'User not found',
         status: "error"
       })
     }
     const isPasswordMatch = bcrypt.compare(password, user.password);
     if(!isPasswordMatch){
-      return res.status(400).json({
+      return res.status(401).json({
         message: 'Please provide correct password',
         status: "error"
       })
@@ -77,7 +77,7 @@ const login = async (req, res, next) => {
       }
     )
 
-    res.status(200).json({
+    return res.status(200).json({
       token: jwtToken,
       status: 'success',
       message: 'user login successfull'
