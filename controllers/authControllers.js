@@ -53,22 +53,22 @@ const login = async (req, res, next) => {
     if(!email || !password){
       return res.status(400).json({
         message: 'Please provide email and password',
-        status: "error"
+        status: "Error"
       })
     }
 
     const user = await User.findOne({email: email});
     if(!user){
       return res.status(401).json({
-        message: 'User not found',
-        status: "error"
+        message: 'Invalid email or password',
+        status: "Error"
       })
     }
     const isPasswordMatch = bcrypt.compare(password, user.password);
     if(!isPasswordMatch){
       return res.status(401).json({
-        message: 'Please provide correct password',
-        status: "error"
+        message: 'Invalid email or password',
+        status: "Error"
       })
     }
     const jwtToken = jwt.sign({userId: user._id, username: user.username, email: user.email},
